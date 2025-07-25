@@ -121,16 +121,28 @@ let piece_x = 0
 let piece_y = 0 
 let ticks = 0
 let tick_cycle = tick_level0_cycle
+let gameInterval = null  // Para controlar el intervalo del juego
+let dropInterval = null  // Para controlar el intervalo de caída de piezas
 
 // ---- FUNCIONES ----------------------------------------------
 
 function updateSpeed() {
     base_speed = parseInt(speedSlider.value)
     speedValue.textContent = base_speed
-    // Calcular tick_cycle basado en velocidad base y líneas completadas
-    let speed_multiplier = 11 - base_speed // Invertir para que 10 sea más rápido
-    let level_bonus = Math.floor(lines / 10) // Acelerar cada 10 líneas
-    tick_cycle = Math.max(1, speed_multiplier * 3 - level_bonus)
+    
+    // Calcular intervalo basado en velocidad (más directo)
+    // Velocidad 1 = 1000ms (1 segundo), Velocidad 10 = 100ms (muy rápido)
+    let dropSpeed = 1100 - (base_speed * 100)  // 1000, 900, 800, 700, 600, 500, 400, 300, 200, 100
+    let level_bonus = Math.floor(lines / 10) * 50 // Acelerar 50ms cada 10 líneas
+    let finalDropSpeed = Math.max(50, dropSpeed - level_bonus)
+    
+    console.log(`Speed: ${base_speed}, Drop speed: ${finalDropSpeed}ms`) // Para debug
+    
+    // Reiniciar el intervalo de caída de piezas
+    if (dropInterval) {
+        clearInterval(dropInterval)
+    }
+    dropInterval = setInterval(movePiece, finalDropSpeed)
 }
 
 function drawBlock(x, y, color, ctx){
@@ -345,6 +357,11 @@ function loseGame(){
 }
 
 function resetGame(){
+    // Limpiar intervalos existentes
+    if (dropInterval) {
+        clearInterval(dropInterval)
+    }
+    
     board = board.map(row => row.map(color => 0))
     nextBoard = nextBoard.map(row => row.map(color => 0))
     score = 0
@@ -367,11 +384,7 @@ function resetGame(){
 }
 
 function gameLoop(){
-    if (++ticks == tick_cycle){
-        movePiece()
-        ticks = 0
-    }
-
+    // Solo dibujar, el movimiento se maneja por separado
     drawBoard()
     drawCurrentBlock()
 }
@@ -379,7 +392,20 @@ function gameLoop(){
 // ---- LISTENERS -----------------
 
 // Speed slider listener
-speedSlider.addEventListener('input', updateSpeed)
+if (speedSlider) {
+    speedSlider.addEventListener('input', function() {
+        console.log("Slider changed to:", speedSlider.value)
+        updateSpeed()
+    })
+    
+    // También agregar listener para el evento 'change'
+    speedSlider.addEventListener('change', function() {
+        console.log("Slider change event to:", speedSlider.value)
+        updateSpeed()
+    })
+} else {
+    console.error("Error: speedSlider no encontrado")
+}
 
 document.addEventListener('keydown', e => {
     console.log(e)
@@ -551,6 +577,21 @@ function testBoard(){
 
 // ---- MAIN PROGRAM --------------
 
-updateSpeed()  // Inicializar velocidad
-resetGame()
-setInterval(gameLoop, 20)
+// Asegurar que el DOM esté completamente cargado
+document.addEventListener('DOMContentLoaded', function() {
+    // Verificar que los elementos existan antes de inicializar
+    if (speedSlider && speedValue) {
+        console.log("Speed slider encontrado, inicializando velocidad...")
+        updateSpeed()  // Inicializar velocidad
+    } else {
+        console.error("Error: No se encontraron los elementos del speed slider")
+    }
+
+    resetGame()
+    
+    // Iniciar el loop de dibujo (más frecuente para suavidad visual)
+    if (gameInterval) {
+        clearInterval(gameInterval)
+    }
+    gameInterval = setInterval(gameLoop, 16) // ~60 FPS para suavidad
+})
