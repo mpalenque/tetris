@@ -1,0 +1,54 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100vw;
+    background-color: black;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+canvas {
+    background-color: grey;
+}
+
+.next-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 50px;
+    height: 100vh;
+    justify-content: center;
+}
+
+.score-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: 50px;
+    height: 100vh;
+    justify-content: center;
+}
+
+.left-stats-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 50px;
+    min-width: 150px;
+    height: 100vh;
+    justify-content: center;
+}
+
+h1 {
+    color: white;
+    margin: 20px 0;
+}
+
+.big-number {
+    font-size: 50px;
+}

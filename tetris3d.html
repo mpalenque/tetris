@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">CU
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Tetris 3D</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/OutlinePass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/FXAAShader.js"></script>
+</head>
+<body>
+    <div class="left-stats-container">
+        <h1 id="fullNumber" class="big-number">100%</h1>
+        <h1>Best</h1>
+    </div>
+    <div class="next-container">
+        <div id="nextCanvas" style="width: 400px; height: 300px; background-color: grey;"></div>
+        <h1>Next</h1>
+    </div>
+    <div id="gameContainer" style="width: 900px; height: 1500px;"></div>
+    <div class="score-container">
+        <h1 id="scoreNumber" class="big-number">0</h1>
+        <h1>Score</h1>
+    </div>
+    <div class="score-container">
+        <h1 id="linesNumber" class="big-number">0</h1>
+        <h1>Lines</h1>
+    </div>
+    <script src="script3d_fixed.js"></script>
+</body>
+</html>
