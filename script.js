@@ -105,7 +105,8 @@ const block_purple = {
 const candidate_pieces = [block_red, block_orange, block_yellow, block_green, block_cyan, block_blue, block_purple]
 
 let current_color = gameColors[getRandomValue(gameColors.length)]
-let next_piece = candidate_pieces[current_color-1]
+let next_piece_index = getRandomValue(candidate_pieces.length)
+let next_piece = candidate_pieces[next_piece_index]
 
 let current_piece = {
     rotations: next_piece.rotations,
@@ -220,7 +221,8 @@ function addScore(diff){
 
 function choseNextBlock(){
     let color = gameColors[getRandomValue(gameColors.length)]
-    next_piece = candidate_pieces[color-1]
+    next_piece_index = getRandomValue(candidate_pieces.length)
+    next_piece = candidate_pieces[next_piece_index]
 
     // clear next board
     nextBoard.forEach((row, y) => {
