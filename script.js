@@ -4,6 +4,8 @@ const nextCanvas = document.getElementById("nextCanvas")
 const scoreText = document.getElementById("scoreNumber")
 const linesText = document.getElementById("linesNumber")
 const fullText = document.getElementById("fullNumber")
+const speedSlider = document.getElementById("speedSlider")
+const speedValue = document.getElementById("speedValue")
 
 // Prepare board
 const context = canvas.getContext("2d")
@@ -114,12 +116,22 @@ let current_piece = {
 }
 
 const tick_level0_cycle = 30
+let base_speed = 5  // Velocidad base (1-10)
 let piece_x = 0
 let piece_y = 0 
 let ticks = 0
 let tick_cycle = tick_level0_cycle
 
 // ---- FUNCIONES ----------------------------------------------
+
+function updateSpeed() {
+    base_speed = parseInt(speedSlider.value)
+    speedValue.textContent = base_speed
+    // Calcular tick_cycle basado en velocidad base y líneas completadas
+    let speed_multiplier = 11 - base_speed // Invertir para que 10 sea más rápido
+    let level_bonus = Math.floor(lines / 10) // Acelerar cada 10 líneas
+    tick_cycle = Math.max(1, speed_multiplier * 3 - level_bonus)
+}
 
 function drawBlock(x, y, color, ctx){
     ctx.fillStyle = blockColors[color]
@@ -179,8 +191,11 @@ function movePiece(){
             const heightToCheck = getPieceHeight(getCurrentPieceCoords())
 
             while (checkLine(piece_y, heightToCheck)) linesAdded++
-            if (linesAdded) addScore(100*linesAdded)
-            else addScore(Math.round(piece_y / 4))  
+            
+            // Solo sumar puntos si se completaron líneas
+            if (linesAdded > 0) {
+                addScore(100 * linesAdded)
+            }
             
             current_piece = {
                 rotations: next_piece.rotations,
@@ -204,18 +219,11 @@ function addScore(diff){
     score += diff
     scoreText.innerText = score.toString()
 
-    if (diff >= 100) goodPieces += diff / 10
-    else if (diff == 5) goodPieces += 1
-    else {
-        badPieces += Math.pow((5-diff), 2)
-
-        if (badPieces > 100){
-            badPieces /= 4
-            goodPieces /= 4
-        }
-    }
-
-    efficiency = badPieces ? (goodPieces) / (goodPieces + badPieces) : 1
+    // Solo cuenta como buenas piezas las que completan líneas
+    goodPieces += diff / 100  // diff siempre será múltiplo de 100
+    
+    // Actualizar eficiencia (en este caso siempre será 100% ya que solo contamos líneas)
+    efficiency = 1.0
     fullText.innerText = `${Math.floor(efficiency * 100)}%`
 }
 
@@ -267,12 +275,8 @@ function checkLine(sinceRow, iterations){
     }
 
     if (sectionsCleared > 0) {
-        // update gravity
-        if (lines < 100){
-            tick_cycle = tick_level0_cycle - Math.floor(lines / 5)
-        } else {
-            tick_cycle = Math.max(1, tick_level0_cycle - 20 - Math.floor((lines-100) / 10)) 
-        }
+        // update speed based on lines completed and slider
+        updateSpeed()
         return true
     }
 
@@ -347,7 +351,8 @@ function resetGame(){
     lines = 0
     goodPieces = 0
     badPieces = 0
-    tick_cycle = tick_level0_cycle
+    
+    updateSpeed()  // Actualizar velocidad basada en el slider
 
     choseNextBlock()
     drawBoard()
@@ -372,6 +377,9 @@ function gameLoop(){
 }
 
 // ---- LISTENERS -----------------
+
+// Speed slider listener
+speedSlider.addEventListener('input', updateSpeed)
 
 document.addEventListener('keydown', e => {
     console.log(e)
@@ -543,5 +551,6 @@ function testBoard(){
 
 // ---- MAIN PROGRAM --------------
 
+updateSpeed()  // Inicializar velocidad
 resetGame()
 setInterval(gameLoop, 20)
